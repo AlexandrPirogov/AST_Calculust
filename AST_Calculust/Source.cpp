@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "Token.h"
+#include "SimpleTree.h"
 
 using namespace std;
 
@@ -20,15 +21,16 @@ int main() {
 	cout << "Input your expressions \n";
 	cout << ">";
 	string expression;
-	expression = "(7+3-3+7)";
+	expression = "(7+3*5-2)";
 	//cin >> expression;
 	parse_string(expression, 0, expression.length());
 	cout << expression;
 	vector<Token> tokens;
 	take_tokens(tokens, expression);
-	for (int i = 0; i < tokens.size(); i++) {
-		cout << tokens[i].value << endl;
-	}
+	SimpleTree* tree = new SimpleTree();
+	tree->tokens = tokens;
+	tree->parse_to_tree();
+	tree->show_tree(tree->root);
 	return 0;
 }
 
@@ -80,7 +82,7 @@ void take_operation(string& _str, char sign, int start, int end)
 				int bracket_count = brackets_count(_str, _start, i - 1);
 				if (op_c != bracket_count )
 					take_operation(_str, sign, _start, i - 1);
-				_str = _str.substr(0, _start) + "(" + _str.substr(_start, i-_start+right_term+1) + ")" + _str.substr(i - _start + right_term + 2);
+				_str = _str.substr(0, _start) + "(" + _str.substr(_start, i-_start+right_term+1) + ")" + _str.substr(i + right_term + 1);
 			}
 			else if (_str[i - 1] != ')' && _str[i + 1] == '(') {
 				int _end = searchRightEnd(_str, i + 1);
@@ -121,7 +123,7 @@ void take_tokens(vector<Token>& vec, string& _str)
 		else {
 			int num_start = get_right_term(_str, i);
 			string num = _str.substr(i, num_start);
-			Token t('b', num);
+			Token t('n', num);
 			vec.push_back(t);
 		}
 	}
