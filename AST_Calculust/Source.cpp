@@ -31,6 +31,7 @@ int main() {
 	tree->tokens = tokens;
 	tree->parse_to_tree();
 	tree->show_tree(tree->root);
+	tree->calculate(tree->root);
 	return 0;
 }
 

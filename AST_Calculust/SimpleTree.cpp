@@ -27,6 +27,30 @@ void SimpleTree::parse_to_tree()
 	}
 }
 
+void SimpleTree::calculate(TreeNode* _startNode)
+{
+	this->current = _startNode;
+	try {
+		stoi(this->current->value);
+		return;
+	}
+	catch (const std::exception& ex) {
+		if (this->current->Left_child->value == "/" || this->current->Left_child->value == "*" ||
+			this->current->Left_child->value == "-" || this->current->Left_child->value == "+")calculate(this->current->Left_child);
+		if (this->current->Right_child->value == "/" || this->current->Right_child->value == "*" ||
+			this->current->Right_child->value == "-" || this->current->Right_child->value == "+")calculate(this->current->Right_child);
+		if (this->current->Left_child->Left_child == nullptr && this->current->Left_child->Right_child == nullptr
+			&& this->current->Right_child->Left_child == nullptr && this->current->Right_child->Right_child == nullptr) {
+			float result = solve(this->current);
+			this->current->value = std::to_string(result);
+			this->current->compiled_text = "(" + this->current->Left_child->value + this->current->value + this->current->Right_child->value + ")";
+			this->current->Left_child = nullptr;
+			this->current->Right_child = nullptr;
+			this->current = this->current->Parent;
+		}
+	}
+}
+
 void SimpleTree::show_tree(TreeNode* _startNode)
 {
 	std::cout << _startNode->value << "\n";
@@ -34,4 +58,22 @@ void SimpleTree::show_tree(TreeNode* _startNode)
 		show_tree(_startNode->Left_child);
 	if (_startNode->Right_child != nullptr)
 		show_tree(_startNode->Right_child);
+}
+
+float SimpleTree::solve(TreeNode* _current)
+{
+	float result;
+	std::string op = _current->value;
+	if (op == "/") {
+		result = stoi(_current->Left_child->value)/stoi(_current->Right_child->value);
+	} else if (op == "*") {
+		result = stoi(_current->Left_child->value) * stoi(_current->Right_child->value);
+	}
+	else if (op == "-") {
+		result = stoi(_current->Left_child->value) - stoi(_current->Right_child->value);
+	}
+	else {
+		result = stoi(_current->Left_child->value)+stoi(_current->Right_child->value);
+	}
+	return result;
 }

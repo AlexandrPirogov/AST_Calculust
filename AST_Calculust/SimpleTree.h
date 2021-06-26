@@ -14,9 +14,12 @@ public:
 	
 	//commands
 	void parse_to_tree();
-
+	void calculate(TreeNode* _startNode);
 	//queries
 	void show_tree(TreeNode* _startNode);
 private:
 	TreeNode* current;
+
+	//commands
+	float solve(TreeNode* _current);
 };
